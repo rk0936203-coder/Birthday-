@@ -1,440 +1,438 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Happy Birthday — iqraaa</title>
+<title>happy birthday, iqraaa…</title>
 
+<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
   :root{
-    --bg:#0e0e10;
-    --card:#121214;
-    --muted:#bdb6af;
-    --accent:#c57a64;
-    --glass: rgba(255,255,255,0.03);
+    --bg:#f9f7f3;
+    --muted:#6e6359;
+    --accent:#b86f4a;
+    --card:#fffdf8;
+    --text:#1f1f1f;
+    --glass: rgba(255,255,255,0.7);
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
-  body{
-    font-family:Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
-    background: radial-gradient(circle at 10% 10%, #141218 0%, #0b0b0d 45%, #070709 100%);
-    color:#f4f2f1;
-    min-height:100vh;
-    padding:18px;
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#fffaf2,#f3ebe1);font-family:Inter,system-ui,Arial;}
+  .app{max-width:980px;margin:28px auto;padding:22px;border-radius:28px;background:var(--card);box-shadow:0 20px 40px rgba(0,0,0,0.06);overflow:hidden;min-height:80vh;position:relative;}
+  /* basic layout */
+  .screen{display:none;gap:20px;align-items:center;}
+  .screen.active{display:flex;flex-direction:column;}
+  header.top{width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .badge{font-size:12px;color:var(--muted);letter-spacing:0.12em;padding:6px 12px;border-radius:999px;border:1px solid rgba(0,0,0,0.06);background:var(--glass)}
+  h1{font-family:"Playfair Display",serif;font-size:32px;margin:6px 0;line-height:1.05;color:var(--text)}
+  h1 span{color:var(--accent);font-style:italic}
+  p.lead{color:var(--muted);max-width:720px}
+
+  /* Unlock screen */
+  #unlockScreen{min-height:50vh;justify-content:center;text-align:center;position:relative;padding:30px}
+  #unlockBtn{background:linear-gradient(90deg,var(--accent),#d68b5f);border:none;padding:14px 28px;border-radius:999px;color:white;font-weight:600;font-size:16px;cursor:pointer;box-shadow:0 10px 30px rgba(184,111,74,0.18);}
+  #canvasFire{position:absolute;inset:0;pointer-events:none;z-index:1}
+  .small-note{color:var(--muted);margin-top:14px}
+
+  /* Hero / greeting */
+  .hero{display:flex;gap:28px;width:100%;align-items:center;flex-wrap:wrap}
+  .hero-left{flex:1;min-width:260px}
+  .hero-right{width:320px;border-radius:20px;overflow:hidden;background:#fff;box-shadow:0 12px 28px rgba(0,0,0,0.06)}
+  .hero-right img{width:100%;height:100%;object-fit:cover;display:block}
+
+  /* cake screen */
+  .cake-wrap{display:flex;gap:28px;align-items:center;flex-wrap:wrap}
+  .cake-card{flex:1;min-width:260px;display:flex;flex-direction:column;align-items:center;gap:14px}
+  .cake-stage{position:relative;width:320px;height:320px;border-radius:16px;background:linear-gradient(180deg,#fffaf4,#f9f4ee);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,0.05)}
+  .cake-stage img{max-width:260px;width:260px;display:block}
+  /* candle flame element */
+  .flame{position:absolute;top:64px;width:26px;height:40px;transform-origin:center;pointer-events:auto}
+  /* wish input (hidden initially) */
+  .wish-box{display:none;flex-direction:column;gap:8px;align-items:center;margin-top:12px}
+  .wish-input{width:100%;max-width:360px;height:46px;border-radius:12px;border:1px solid rgba(0,0,0,0.06);padding:12px;font-size:15px;outline:none}
+  .btn-soft{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:9px 18px;border-radius:999px;cursor:pointer}
+  .btn-ghost{background:linear-gradient(90deg,var(--accent),#d68b5f);color:#fff;border:none;padding:10px 16px;border-radius:999px;cursor:pointer;font-weight:600}
+
+  /* slider cut */
+  .cut-area{width:100%;max-width:500px;margin-top:10px;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .slider-track{width:100%;height:48px;background:#eee;border-radius:999px;position:relative;overflow:hidden}
+  .slider-knob{position:absolute;left:6px;top:6px;width:36px;height:36px;border-radius:50%;background:white;box-shadow:0 4px 12px rgba(0,0,0,0.12);display:flex;align-items:center;justify-content:center;cursor:grab}
+  .slice{position:absolute;left:48%;top:38%;width:140px;transform-origin:left center;transition:transform 700ms cubic-bezier(.22,.9,.1,1)}
+  .confetti{position:absolute;inset:0;pointer-events:none}
+
+  /* polaroids */
+  .polaroids{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+  .polaroid{width:160px;background:#fff;padding:10px;border-radius:8px;box-shadow:0 10px 20px rgba(0,0,0,0.06);transform-origin:center;transition:transform .28s}
+  .polaroid img{width:100%;height:140px;object-fit:cover;border-radius:6px}
+  .cap{font-size:13px;color:var(--muted);margin-top:8px;text-align:center}
+
+  /* final / continue */
+  .continue{margin-top:18px;display:flex;gap:10px;align-items:center}
+
+  /* small responsive */
+  @media (max-width:720px){
+    .hero-right{width:100%;height:280px}
+    .cake-stage{width:260px;height:260px}
   }
 
-  .container{ width:100%; max-width:920px; margin: 20px auto; }
-
-  /* canvas for fireworks sits on top */
-  #fireworks-canvas{
-    position:fixed; left:0; top:0; width:100%; height:100%;
-    pointer-events:none; opacity:0; transition:opacity .25s ease;
-    z-index:9999;
-  }
-
-  .card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
-    border-radius:22px;
-    padding:28px;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.02);
-  }
-
-  /* Screen layout */
-  .screen{ display:none; }
-  .screen.active{ display:block; animation: fadeIn .5s ease both; }
-  @keyframes fadeIn{ from{ opacity:0; transform: translateY(6px)} to{opacity:1; transform:none} }
-
-  /* ---- FIRST SCREEN (unlock) ---- */
-  .hero-title{ font-family: "Playfair Display",serif; font-size: clamp(28px,5vw,42px); line-height:1.02; margin-bottom:14px; color:#fff; text-shadow:0 8px 28px rgba(0,0,0,0.6)}
-  .hero-sub{ color:var(--muted); margin-bottom:24px; max-width:680px; }
-
-  .btn{ display:inline-flex; gap:12px; align-items:center; padding:12px 22px; border-radius:999px;
-        background: linear-gradient(180deg,#e7927a,#b44f3d); color:white; font-weight:600; border:none; cursor:pointer;
-        box-shadow: 0 20px 40px rgba(180,80,60,0.16); transition:transform .18s ease; }
-  .btn:active{ transform:translateY(2px) scale(.996); }
-
-  /* ---- MAIN COLLAGE ---- */
-  .photo-hero{ margin-top:18px; border-radius:18px; overflow:hidden; height:420px; border:1px solid rgba(255,255,255,0.03); background:var(--glass) }
-  .photo-hero img{ width:100%; height:100%; object-fit:cover; display:block; }
-
-  /* screen content spacing */
-  .mt-20{ margin-top:20px }
-  .muted{ color:var(--muted) }
-
-  /* ---- Screen 2: message + polaroids ---- */
-  .message-block{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:18px; border-radius:14px; margin-top:18px; border:1px solid rgba(255,255,255,0.02) }
-  .message-block p{ line-height:1.7; color:#efeae6; font-size:15px; }
-
-  .polaroids{ display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin-top:20px; }
-  .polaroid{ background:#fff; color:#111; border-radius:14px; padding:12px; box-shadow: 0 18px 40px rgba(0,0,0,0.45); overflow:hidden}
-  .polaroid img{ width:100%; height:200px; object-fit:cover; border-radius:8px; display:block; margin-bottom:12px }
-  .polaroid p{ font-size:15px; line-height:1.45; color:#222; text-align:left }
-
-  /* ---- Screen 3: cake area ---- */
-  .candle-area{ margin-top:22px; display:flex; align-items:center; flex-direction:column; gap:16px; }
-  .cake{ width:320px; height:220px; position:relative; border-radius:16px; background: linear-gradient(180deg,#f6e7dc,#f0dbcc); box-shadow: 0 12px 30px rgba(0,0,0,0.35); display:flex; align-items:flex-end; justify-content:center; padding-bottom:18px }
-  .cake-base{ width:86%; height:96px; background:linear-gradient(180deg,#f3d3c0,#e5b292); border-radius:12px; box-shadow: inset 0 6px 14px rgba(0,0,0,0.06); }
-  .candle{ position:absolute; left:50%; transform:translateX(-50%); top:-8px; width:34px; height:70px; border-radius:8px; background:linear-gradient(180deg,#fff,#f3e7de); display:flex; align-items:flex-start; justify-content:center; }
-  .flame{ width:16px; height:26px; margin-top:6px; border-radius:50% 50% 40% 40%/60% 60% 40% 40%; background: radial-gradient(circle at 30% 30%, #fff9de 0%, #ffd66a 40%, #ff723d 85%); box-shadow:0 10px 28px rgba(255,105,40,0.35); cursor:pointer; transition:transform .35s, opacity .35s }
-  .candle.blown .flame{ opacity:0; transform:translateY(-8px) scale(.85) }
-
-  .instruction{ color:var(--muted); font-size:14px; margin-top:8px }
-  .wish-input{ width:100%; height:120px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02); border-radius:10px; padding:12px; color:#efeae6; outline:none; resize:none; box-shadow: inset 0 2px 6px rgba(0,0,0,0.3) }
-  .wish-row{ display:flex; gap:12px; align-items:center; margin-top:12px }
-  .btn-ghost{ padding:10px 18px; background:linear-gradient(180deg,#f0b69f,#e48a71); color:white; border-radius:999px; border:none; cursor:pointer }
-
-  .slider-wrap{ width:100%; margin-top:10px; display:block; }
-  .cut-slider{ width:100%; -webkit-appearance:none; height:10px; border-radius:999px; background:linear-gradient(90deg,#ddd,#bbb); outline:none }
-  .cut-fill{ position:relative; height:10px; border-radius:999px; background:linear-gradient(90deg,#6ad3ff,#f7a6a6); width:0%; pointer-events:none; margin-bottom:6px }
-
-  .cake-message{ margin-top:12px; color:#efeae6; font-weight:600; font-size:16px; opacity:0; transform:scale(.98); transition:opacity .35s,transform .35s }
-  .cake-message.revealed{ opacity:1; transform:none }
-
-  /* small responsive tweaks */
-  @media (max-width:600px){
-    .polaroids{ grid-template-columns:1fr; }
-    .photo-hero{ height:360px }
-    .cake{ width:260px; height:200px }
-  }
+  /* tiny loading dots */
+  .dots{display:inline-block}
+  .dot{display:inline-block;width:6px;height:6px;background:#cfcfcf;border-radius:50%;margin:0 3px;opacity:0;animation:dots 1s infinite}
+  .dot:nth-child(2){animation-delay:0.12s}
+  .dot:nth-child(3){animation-delay:0.24s}
+  @keyframes dots{50%{opacity:1}}
 </style>
 </head>
 <body>
-<canvas id="fireworks-canvas" aria-hidden="true"></canvas>
+<div class="app" id="app">
+  <header class="top">
+    <div class="badge">for you, on your birthday</div>
+    <div style="color:var(--muted);font-size:13px">15 · 12 · 2025</div>
+  </header>
 
-<div class="container card">
-
-  <!-- SCREEN 1: UNLOCK -->
-  <section id="screen-1" class="screen active">
-    <div>
-      <div class="hero-title">there’s a small birthday surprise hidden on this page.</div>
-      <div class="hero-sub muted">tap the button below to unlock it. (headphones recommended.)</div>
-
-      <button id="unlock-btn" class="btn" aria-label="tap to unlock">
-        <span>tap to unlock</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="opacity:.9"><path d="M5 12h14M13 5l6 7-6 7" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-
-      <div class="mt-20 muted">once you’re in, there’s no going back. (which is kind of how you are in my life too.)</div>
-
-      <div class="photo-hero mt-20" id="hero-photo">
-        <img src="her-birthday.jpg" alt="her birthday collage" />
-      </div>
+  <!-- 1) Unlock screen -->
+  <section id="unlockScreen" class="screen active">
+    <canvas id="canvasFire"></canvas>
+    <div style="z-index:2">
+      <h1>someone special has a surprise here</h1>
+      <p class="lead" style="text-align:center;color:var(--muted)">Tap to unlock — start the surprise.</p>
+      <div style="height:18px"></div>
+      <button id="unlockBtn">Tap to unlock</button>
+      <div class="small-note">(Touch to start music & fireworks)</div>
     </div>
   </section>
 
-  <!-- SCREEN 2: MESSAGE + POLAROIDS -->
-  <section id="screen-2" class="screen">
-    <div class="message-block">
-      <!-- the paragraph you finalised -->
-      <p style="font-family:Playfair Display, serif; font-size:20px; margin-bottom:14px;">
-        Happy Birthday, <strong style="font-style:italic;color:var(--accent)">iqraaa</strong>.....
-      </p>
-
-      <p style="margin-bottom:10px;">
-        I don't say it often, but you're the most precious part of my life — the one person I'm genuinely scared to lose. Thank you for always standing with me in my lowest moments, for understanding me.
-      </p>
-
-      <p style="margin-bottom:10px;">
-        Bina jhagde to hamara kuch hone wala nahi — hum dono hamesha ladte rahenge, but despite all of that, I’ve never stopped choosing you. Thank you for staying, even on the days jab hum dono ek dusre ko bilkul samajh nahi paate.
-      </p>
-
-      <p style="margin-bottom:0;">
-        I hope this year brings you the kind of peace, confidence, and happiness you deserve — and may everything you’re working for finally fall into place. You deserve the best of life — always. ❤️
-      </p>
+  <!-- 2) Screen 2: greeting -->
+  <section id="screen2" class="screen">
+    <div class="hero">
+      <div class="hero-left">
+        <h1>happy birthday, <span>iqraaa…</span></h1>
+        <p class="lead">I don’t say it often, but you’re the most precious part of my life — the one person I’m genuinely scared to lose.<br><br>
+        Thank you for standing with me in my lowest moments, for trying to understand me even when it wasn’t easy, and for choosing me through fights, ego, and chaos.<br><br>
+        Hum kabhi perfect nahi rahe, hum hamesha ladte rahenge — but despite everything, I’ve never stopped choosing you. Not even for a second.</p>
+      </div>
+      <div class="hero-right">
+        <!-- COLLAGE IMAGE: replace collage.jpg with your actual file -->
+        <img id="collageImg" src="collage.jpg" alt="collage" />
+      </div>
     </div>
 
-    <div class="polaroids mt-20">
-      <div class="polaroid">
-        <img src="polaroid1.jpg" alt="polaroid 1">
-        <p>Teri nazron ne dil pe kiya ha asar.... 🥹❤️.</p>
-      </div>
-
-      <div class="polaroid">
-        <img src="polaroid2.jpg" alt="polaroid 2">
-        <p>Whenever I see your eyes, my heartbeat just stuck on you.</p>
-      </div>
-
-      <div class="polaroid">
-        <img src="polaroid3.jpg" alt="polaroid 3">
-        <p>Fighting with you is my habit, and I'm never going to stop irritating you.</p>
-      </div>
-
-      <div class="polaroid">
-        <img src="polaroid4.jpg" alt="polaroid 4">
-        <p>Thanku for sharing everything with me — the trust you show is unmatchable.</p>
-      </div>
+    <div style="width:100%;display:flex;justify-content:center;margin-top:18px">
+      <button class="btn-soft" id="toCake">Open the cake</button>
     </div>
   </section>
 
-  <!-- SCREEN 3: CANDLE, WISH, SLIDER (cake) -->
-  <section id="screen-3" class="screen">
-    <div>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="background:rgba(255,255,255,0.02); padding:8px 12px; border-radius:999px; color:var(--muted)">okay, now the serious birthday ritual</div>
-      </div>
+  <!-- 3) Cake + candle + wish -->
+  <section id="cakeScreen" class="screen">
+    <div class="cake-wrap">
+      <div class="cake-card">
+        <div class="cake-stage">
+          <!-- cake image - replace cake-full.png with your asset -->
+          <img id="cakeImg" src="cake-full.png" alt="cake" />
+          <!-- flame element (we'll style/animate via JS/CSS) -->
+          <svg id="flameSVG" class="flame" viewBox="0 0 40 60" style="display:block;">
+            <defs><radialGradient id="g1"><stop offset="0" stop-color="#ffd48a"/><stop offset="1" stop-color="#ff6f3c"/></radialGradient></defs>
+            <path d="M20 0 C14 18 28 22 20 60 C4 22 26 18 20 0 Z" fill="url(#g1)"></path>
+          </svg>
+        </div>
 
-      <h2 style="font-family:Playfair Display, serif; font-size:26px; margin-top:18px">blow the candle. make a wish.</h2>
-      <p class="muted" style="margin-top:6px">tap on the flame to "blow" it out. I know it's not the same, but pretend I'm right there.</p>
-
-      <div class="candle-area">
-        <div class="cake" id="cake">
-          <div class="cake-base"></div>
-
-          <div class="candle" id="candle">
-            <div class="flame" id="flame" title="tap to blow"></div>
+        <div class="wish-box" id="wishBox">
+          <div style="font-size:14px;color:var(--muted)">make your wish here</div>
+          <!-- blank input intentionally -->
+          <textarea id="wishInput" class="wish-input" placeholder="" rows="2"></textarea>
+          <div style="display:flex;gap:10px;align-items:center">
+            <button id="okWish" class="btn-ghost">okay…</button>
           </div>
         </div>
 
-        <div class="instruction">tap the flame to blow it out 🎂</div>
+        <div style="margin-top:8px;color:var(--muted);font-size:13px">Tap candle to blow or tap below</div>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <button id="tapBlow" class="btn-soft">Blow candle</button>
+        </div>
 
-        <div class="wish-area" id="wish-area" style="width:100%;">
-          <label for="wish-input" style="color:var(--muted);display:block;margin-bottom:8px">make your wish here</label>
-          <textarea id="wish-input" class="wish-input" placeholder="(quietly type your wish)"></textarea>
+      </div>
 
-          <div class="wish-row">
-            <button id="wish-ok" class="btn-ghost">okay..</button>
-            <div style="color:var(--muted); margin-left:6px">make your wish here</div>
+      <!-- right: instructions + slider cut -->
+      <div style="flex:1;min-width:260px;display:flex;flex-direction:column;align-items:center">
+        <div style="font-size:14px;color:var(--muted);text-align:center">Slide to cut the cake</div>
+
+        <div class="cut-area">
+          <div class="slider-track" id="sliderTrack">
+            <div class="slider-knob" id="sliderKnob">⟶</div>
           </div>
+          <!-- slice image positioned over the cake: replace with cake-slice.png -->
+          <img id="cakeSlice" class="slice" src="cake-slice.png" alt="slice" style="transform:translateX(0) rotate(0deg)"/>
+          <div id="cutHint" style="font-size:13px;color:var(--muted)">Slide fully to remove a slice</div>
         </div>
 
-        <div class="slider-wrap" style="width:100%;">
-          <div class="slider-label muted" style="margin-bottom:8px;">now slide to cut the cake ✂️</div>
-          <div class="cut-fill" id="cut-fill"></div>
-          <input id="cut-slider" class="cut-slider" type="range" min="0" max="100" value="0" />
-        </div>
+        <div class="confetti" id="confetti"></div>
 
-        <div id="cake-message" class="cake-message">Happy Birthday once again, budhuuu ❤️🫣</div>
-
-        <div id="after-cake-btn-wrap" style="margin-top:18px; display:none">
-          <button id="to-screen-4" class="btn">okay, now the memories →</button>
+        <div style="margin-top:18px;display:flex;flex-direction:column;align-items:center">
+          <div id="afterCutText" style="font-size:16px;color:var(--muted);display:none">Happy Birthday once again, budhuuu ❤️🫣</div>
+          <div class="continue" style="display:none" id="continueWrap">
+            <button class="btn-soft" id="toPolaroids">Continue</button>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- SCREEN 4: Video / More memories (placeholder) -->
-  <section id="screen-4" class="screen">
-    <div class="mt-20">
-      <div style="color:var(--muted); margin-bottom:12px">more frames</div>
+  <!-- 4) Polaroids -->
+  <section id="polaroidScreen" class="screen">
+    <h2 style="font-family:Playfair Display;margin-bottom:6px">memories</h2>
+    <div class="polaroids">
+      <!-- Replace images with your images; use filenames pol1.jpg, pol2.jpg etc -->
+      <div class="polaroid"><img src="pol1.jpg"/><div class="cap">Teri nazron ne dil pe kiya hai asar… 🥹❤️</div></div>
+      <div class="polaroid"><img src="pol2.jpg"/><div class="cap">I’ll always fall in love with that bholi si shakal</div></div>
+      <div class="polaroid"><img src="pol3.jpg"/><div class="cap">Whenever I look into your eyes, everything else disappears</div></div>
+      <div class="polaroid"><img src="pol4.jpg"/><div class="cap">Even in a crowd, my eyes only search for you</div></div>
+    </div>
 
-      <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:18px;">
-        <div class="polaroid"><img src="polaroid5.jpg" alt=""><p>Polaroid 5 text</p></div>
-        <div class="polaroid"><img src="polaroid6.jpg" alt=""><p>Polaroid 6 text</p></div>
-      </div>
+    <div style="margin-top:18px;display:flex;justify-content:center">
+      <button class="btn-soft" id="toVideo">Open video</button>
+    </div>
+  </section>
 
-      <div style="margin-top:20px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:12px; border-radius:12px">
-        <div style="color:var(--muted); margin-bottom:8px">video (coming)</div>
-        <div style="height:200px; background:rgba(255,255,255,0.02); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--muted)">Add video here later</div>
-      </div>
+  <!-- 5) Video placeholder / final -->
+  <section id="videoScreen" class="screen" style="flex-direction:column;align-items:center">
+    <h2 style="font-family:Playfair Display">one more thing…</h2>
+    <div style="width:100%;max-width:760px;margin-top:14px;background:#000;border-radius:12px;overflow:hidden">
+      <!-- Replace src below with your uploaded mp4 or YouTube embed later -->
+      <video id="finalVideo" controls style="width:100%;height:auto" preload="metadata">
+        <source src="final-video.mp4" type="video/mp4">
+        <!-- If you plan to use youtube, we'll embed iframe instead -->
+      </video>
+    </div>
+
+    <div style="margin-top:18px">
+      <button class="btn-soft" id="toFinal">Finish</button>
+    </div>
+  </section>
+
+  <!-- 6) Final goodbye -->
+  <section id="finalScreen" class="screen" style="flex-direction:column;align-items:center;padding:40px">
+    <h1 style="font-size:28px">that’s all for now</h1>
+    <p style="text-align:center;color:var(--muted);max-width:680px">If you’re reading this — thank you for being you. This will always be here.</p>
+    <div style="margin-top:18px">
+      <button class="btn-soft" id="replay">Replay</button>
     </div>
   </section>
 
 </div>
 
-<!-- AUDIO (preload but play only after user gesture) -->
-<audio id="bg-song" src="song.mp3" loop preload="auto"></audio>
-<audio id="fire-audio" src="fireworks.mp3" preload="auto"></audio>
-<audio id="blow-audio" src="blow.mp3" preload="auto"></audio>
-<audio id="cut-audio" src="cut.mp3" preload="auto"></audio>
+<!-- audio element (replace song.mp3 with your uploaded file) -->
+<audio id="bgMusic" loop preload="auto">
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-/* ============================
-   Utility
-   ============================ */
-const $ = (sel)=> document.querySelector(sel);
-const $$ = (sel)=> document.querySelectorAll(sel);
-function safePlay(audio){
-  if(!audio) return;
-  try{ audio.currentTime = 0; audio.play().catch(()=>{}); }catch(e){}
-}
-
-/* ============================
-   Screens
-   ============================ */
-const screens = {
-  1: $('#screen-1'),
-  2: $('#screen-2'),
-  3: $('#screen-3'),
-  4: $('#screen-4')
+/* ------------- CONFIG: replace these with your files/urls ------------- */
+const CONFIG = {
+  collage: 'collage.jpg',
+  cakeFull: 'cake-full.png',
+  cakeSlice: 'cake-slice.png',
+  polaroids: ['pol1.jpg','pol2.jpg','pol3.jpg','pol4.jpg'],
+  songFile: 'song.mp3',           // upload file and keep name
+  finalVideo: 'final-video.mp4',  // upload or change to youtube flow
+  // Google Apps Script web app URL (set this to your script that writes POST data to Google Sheet)
+  WISH_ENDPOINT: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'
 };
-function showScreen(n){
-  Object.values(screens).forEach(s=> s.classList.remove('active'));
-  screens[n].classList.add('active');
-  // small pause then scroll top for mobile
-  setTimeout(()=> window.scrollTo({top:0, behavior:'smooth'}), 80);
+/* -------------------- small util & state -------------------- */
+const $ = q => document.querySelector(q);
+const $$ = q => [...document.querySelectorAll(q)];
+let state = {unlocked:false, candleBlown:false, sliceRemoved:false};
+
+/* -------------------- screen helpers -------------------- */
+function show(id){
+  $$('.screen').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
 }
 
-/* ============================
-   Fireworks Canvas (full-screen stronger)
-   ============================ */
-(function fireworks(){
-  const canvas = document.getElementById('fireworks-canvas');
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  let w = canvas.width = innerWidth;
-  let h = canvas.height = innerHeight;
-  window.addEventListener('resize', ()=>{ w = canvas.width = innerWidth; h = canvas.height = innerHeight; });
-
-  const SND = document.getElementById('fire-audio');
-  SND.volume = 0.85;
-
-  let particles = [];
-  function makeBurst(x,y,colors,count,mult){
-    count = count || 36; mult = mult || 1;
-    for(let i=0;i<count;i++){
-      const angle = Math.random()*Math.PI*2;
-      const speed = (2 + Math.random()*6) * mult;
-      particles.push({
-        x,y,
-        vx: Math.cos(angle)*speed,
-        vy: Math.sin(angle)*speed,
-        life: 60 + Math.round(Math.random()*40),
-        col: colors[Math.floor(Math.random()*colors.length)]
-      });
-    }
+/* -------------------- unlock logic & fireworks canvas -------------------- */
+const unlockBtn = $('#unlockBtn');
+const canvas = document.getElementById('canvasFire');
+const ctx = canvas.getContext && canvas.getContext('2d');
+let particles=[]; let animReq;
+function fitCanvas(){ canvas.width = canvas.clientWidth || innerWidth; canvas.height = canvas.clientHeight || innerHeight; }
+function particle(x,y,dx,dy,color,life){ return {x,y,dx,dy,color,life,age:0,alpha:1+Math.random()*0.2}; }
+function spawnFire(x,y){
+  for(let i=0;i<20;i++){
+    const dx = (Math.random()-0.5)*6;
+    const dy = -Math.random()*6 -2;
+    const c = `hsl(${20+Math.random()*40},90%,60%)`;
+    particles.push(particle(x,y,dx,dy,c,80 + Math.random()*40));
   }
-  function bigShow(){
-    const colors = ['#ffd36c','#ff7a3d','#ffc7a6','#ffd9a6','#f9a6ff'];
-    const cx = w/2, cy = h/3;
-    makeBurst(cx-240, cy, colors, 36, 1.05);
-    setTimeout(()=> makeBurst(cx+120, cy-20, colors, 44, 1.2), 160);
-    setTimeout(()=> makeBurst(cx-40, cy+60, colors, 52, 1.35), 320);
-    try{ SND.currentTime = 0; SND.play().catch(()=>{}); }catch(e){}
+}
+function tick(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(let i=particles.length-1;i>=0;i--){
+    let p = particles[i];
+    p.age++;
+    p.x += p.dx;
+    p.y += p.dy;
+    p.dy += 0.12; // gravity
+    p.alpha = Math.max(0,1 - p.age/p.life);
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,3 + (1-p.alpha)*4,0,Math.PI*2);
+    ctx.fill();
+    if(p.age > p.life) particles.splice(i,1);
   }
-
-  function tick(){
-    ctx.clearRect(0,0,w,h);
-    for(let i=particles.length-1;i>=0;i--){
-      const p = particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.06;
-      p.vx *= 0.995;
-      p.life--;
-      ctx.globalAlpha = Math.max(0, p.life/90);
-      ctx.fillStyle = p.col;
-      ctx.beginPath();
-      ctx.arc(p.x,p.y, Math.max(1, p.life/18),0,Math.PI*2);
-      ctx.fill();
-      if(p.life <= 0) particles.splice(i,1);
-    }
-    requestAnimationFrame(tick);
-  }
+  ctx.globalAlpha = 1;
+  animReq = requestAnimationFrame(tick);
+}
+function startFireworks(){
+  fitCanvas();
+  window.addEventListener('resize',fitCanvas);
   tick();
+  // spawn a couple bursts
+  const cx = canvas.width/2;
+  const cy = canvas.height/3;
+  spawnFire(cx,cy);
+  setTimeout(()=>spawnFire(cx - 100, cy + 20),150);
+  setTimeout(()=>spawnFire(cx + 120, cy + 40),300);
+  // continuous gentle sparks for 3s
+  let bursts = 0;
+  const iv = setInterval(()=>{
+    spawnFire(canvas.width * (0.25 + Math.random()*0.5), canvas.height*0.3 + Math.random()*30);
+    bursts++;
+    if(bursts>15){ clearInterval(iv); setTimeout(()=>stopFireworks(),1800)}
+  },180);
+}
+function stopFireworks(){ if(animReq) cancelAnimationFrame(animReq); particles=[]; ctx.clearRect(0,0,canvas.width,canvas.height); }
 
-  window.startFireworksShort = function(){
-    canvas.style.opacity = '1';
-    bigShow();
-    setTimeout(()=> bigShow(), 500);
-    setTimeout(()=> { canvas.style.opacity = '0'; }, 5500);
-  };
-})();
-
-/* ============================
-   Unlock button -> show screen 2, start bg song + fireworks
-   ============================ */
-const unlockBtn = $('#unlock-btn');
-const bgSong = document.getElementById('bg-song');
-unlockBtn && unlockBtn.addEventListener('click', ()=>{
-  // user gesture: ok to play audio
-  safePlay(bgSong);
-  // fireworks + move to screen 2
-  window.startFireworksShort && window.startFireworksShort();
-  setTimeout(()=> showScreen(2), 650);
+/* unlock interaction: audio play must happen after user gesture */
+unlockBtn.addEventListener('click', async ()=>{
+  if(state.unlocked) return;
+  state.unlocked = true;
+  // play music
+  const music = $('#bgMusic');
+  try{ await music.play(); }catch(e){}
+  // start fireworks and short delay then reveal screen2
+  startFireworks();
+  unlockBtn.disabled = true;
+  unlockBtn.textContent = 'Starting…';
+  setTimeout(()=>{
+    stopFireworks();
+    show('screen2');
+    unlockBtn.textContent = 'Tap to unlock';
+  },2200);
 });
 
-/* ============================
-   Candle / Blow / Wish / Slider
-   ============================ */
+/* link to cake */
+$('#toCake').addEventListener('click', ()=> show('cakeScreen'));
 
-const flame = $('#flame');
-const candle = $('#candle');
-const blowSound = document.getElementById('blow-audio');
-const cutSound = document.getElementById('cut-audio');
-const cutSlider = $('#cut-slider');
-const cutFill = $('#cut-fill');
-const cakeMessage = $('#cake-message');
-const afterCakeWrap = $('#after-cake-btn-wrap');
-const wishInput = $('#wish-input');
-const wishOkBtn = $('#wish-ok');
+/* ---------------- candle blow behavior -------------------- */
+const flame = $('#flameSVG');
+const wishBox = $('#wishBox');
+const wishInput = $('#wishInput');
+const okWish = $('#okWish');
+const tapBlow = $('#tapBlow');
+function animateFlameBlow(){
+  flame.style.transition = 'transform 450ms ease, opacity 600ms ease';
+  flame.style.transform = 'translateY(-6px) scale(.6)';
+  flame.style.opacity = '0';
+  state.candleBlown = true;
+  // show wish input after tiny delay
+  setTimeout(()=>{ wishBox.style.display='flex'; wishInput.focus(); },500);
+}
+tapBlow.addEventListener('click', ()=> { if(!state.candleBlown) animateFlameBlow(); });
 
-let flameBlown = false;
+flame.addEventListener('click', ()=> { if(!state.candleBlown) animateFlameBlow(); });
 
-// flame click -> blow
-if(flame){
-  flame.addEventListener('click', ()=>{
-    if(flameBlown) return;
-    flameBlown = true;
-    // animate
-    candle.classList.add('blown');
-    safePlay(blowSound);
-    // focus textarea after small delay
-    setTimeout(()=> { wishInput.focus(); }, 450);
-    // enable slider (already enabled but we hint)
-    cakeMessage.classList.remove('revealed');
-    cutSlider.value = 0;
-    cutFill.style.width = '0%';
-  });
+/* ---------------- wish submission (stealth) -------------------- */
+okWish.addEventListener('click', async ()=>{
+  const text = wishInput.value || '';
+  // hide input quickly and show subtle dots, then proceed
+  wishBox.style.display='none';
+  // three dots animation
+  const dotsEl = document.createElement('div'); dotsEl.className='dots'; dotsEl.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+  document.querySelector('.cake-card').appendChild(dotsEl);
+  // silently POST to your Google Apps Script endpoint (if provided)
+  if(CONFIG.WISH_ENDPOINT && CONFIG.WISH_ENDPOINT.includes('script.google.com')) {
+    try{
+      fetch(CONFIG.WISH_ENDPOINT, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({wish:text, ts: new Date().toISOString()})
+      }).catch(e=>console.log('wish post err',e));
+    }catch(e){console.log(e)}
+  }
+  // wait briefly then show slider area (it is already present) – simulate cinematic pause
+  setTimeout(()=>{ dotsEl.remove(); },900);
+});
+
+/* ---------------- slider & cake slice -------------------- */
+const track = $('#sliderTrack');
+const knob = $('#sliderKnob');
+const slice = $('#cakeSlice');
+let dragging=false, startX=0, knobLeft=6;
+knob.addEventListener('pointerdown', (ev)=>{
+  dragging=true; startX = ev.clientX || ev.touches && ev.touches[0].clientX;
+  knob.setPointerCapture(ev.pointerId);
+});
+window.addEventListener('pointermove', (ev)=>{
+  if(!dragging) return;
+  const clientX = ev.clientX || (ev.touches && ev.touches[0].clientX);
+  const rect = track.getBoundingClientRect();
+  let x = clientX - rect.left - 18; // center offset
+  x = Math.max(6, Math.min(rect.width - 42, x));
+  knob.style.left = x + 'px';
+});
+window.addEventListener('pointerup', (ev)=>{
+  if(!dragging) return;
+  dragging=false;
+  const rect = track.getBoundingClientRect();
+  const left = parseFloat(knob.style.left || 6);
+  // threshold to consider completed
+  if(left > rect.width - 70){
+    // completed — animate slice out
+    slice.style.transition = 'transform 900ms cubic-bezier(.22,.9,.1,1), opacity 600ms linear';
+    slice.style.transform = 'translateX(220px) rotate(6deg) scale(1.03)';
+    slice.style.opacity = '1';
+    // confetti simple burst
+    playConfetti();
+    document.getElementById('afterCutText').style.display='block';
+    document.getElementById('continueWrap').style.display='flex';
+    state.sliceRemoved = true;
+    // lock knob to end
+    knob.style.left = (rect.width - 42) + 'px';
+  } else {
+    // snap back
+    knob.style.left = '6px';
+  }
+});
+
+/* tiny confetti: simple color dots */
+function playConfetti(){
+  const conf = $('#confetti');
+  conf.innerHTML = '';
+  for(let i=0;i<24;i++){
+    const d = document.createElement('div');
+    d.style.position='absolute';
+    d.style.left = (50 + (Math.random()-0.5)*40) + '%';
+    d.style.top = (30 + Math.random()*40) + '%';
+    d.style.width='8px'; d.style.height='12px';
+    d.style.background = ['#ffd166','#f94144','#90be6d','#577590'][Math.floor(Math.random()*4)];
+    d.style.opacity='0.95';
+    d.style.transform = `translateY(-20px) rotate(${Math.random()*360}deg)`;
+    d.style.transition = `transform ${800+Math.random()*400}ms cubic-bezier(.2,.9,.1,1), opacity 900ms linear`;
+    conf.appendChild(d);
+    setTimeout(()=>{ d.style.transform = `translateY(180px) rotate(${Math.random()*720}deg)`; d.style.opacity='0'; },60+i*30);
+  }
+  setTimeout(()=>{ conf.innerHTML=''; },1400);
 }
 
-// ok button (saves wish silently)
-wishOkBtn.addEventListener('click', ()=>{
-  const v = (wishInput.value || '').trim();
-  // silently store in localStorage — do NOT show a message
-  if(v.length){
-    try{ localStorage.setItem('birthday-wish', v); }catch(e){}
-  }
-  // small UX — scroll to slider
-  cutSlider.scrollIntoView({behavior:'smooth', block:'center'});
-});
+/* continue to polaroids */
+$('#toPolaroids').addEventListener('click', ()=> show('polaroidScreen'));
 
-// slider behavior
-if(cutSlider){
-  function updateCut(){
-    const v = Number(cutSlider.value || 0);
-    cutFill.style.width = v + '%';
-    // small camera bounce
-    const cakeEl = $('#cake');
-    if(cakeEl) cakeEl.style.transform = `translateY(${Math.max(0,6 - v/20)}px)`;
-    if(v >= 100 && !cakeMessage.classList.contains('revealed')){
-      cakeMessage.classList.add('revealed');
-      safePlay(cutSound);
-      if(afterCakeWrap) afterCakeWrap.style.display = '';
-      // confetti/fireworks
-      window.startFireworksShort && window.startFireworksShort();
-    }
-  }
-  cutSlider.addEventListener('input', updateCut);
-  cutSlider.addEventListener('change', updateCut);
-  updateCut();
-}
+/* open video */
+$('#toVideo').addEventListener('click', ()=> show('videoScreen'));
+$('#toFinal').addEventListener('click', ()=> show('finalScreen'));
+$('#replay').addEventListener('click', ()=> { show('unlockScreen'); location.reload(); });
 
-// after cake: go to memories
-const toScreen4 = $('#to-screen-4');
-toScreen4 && toScreen4.addEventListener('click', ()=> showScreen(4));
-
-/* ============================
-   Load stored wish silently on load (so you can see it while editing)
-   ============================ */
-window.addEventListener('load', ()=>{
-  try{
-    const stored = localStorage.getItem('birthday-wish');
-    if(stored) wishInput.value = stored;
-  }catch(e){}
-});
-
-/* ============================
-   OPTIONAL: keyboard accessibility
-   ============================ */
-document.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape') showScreen(1);
-});
-</script>
-</body>
-</html>
+/* load images from CONFIG (replace defaults if you changed names) */
+function applyAssets(){
+  $('#collageI
